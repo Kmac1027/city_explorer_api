@@ -11,7 +11,7 @@ app.use('*', notFound);
 
 app.get('/', (request, response) => {
   console.log("alive?");
-  
+  response.sendFile('./public/index.html')
 })
 
 
