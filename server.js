@@ -10,7 +10,8 @@ const app = express();
 app.use('*', notFound);
 
 app.get('/', (request, response) => {
-  console.log("alive?")
+  console.log("alive?");
+  
 })
 
 
