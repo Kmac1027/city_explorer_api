@@ -16,7 +16,7 @@ app.get('/', (request, response) => {
 
 
 //functions
-function notFound {
+function notFound() {
   response.status(404).send('Sorry, Not Found');
 }
 
