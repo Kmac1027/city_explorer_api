@@ -8,10 +8,12 @@ const app = express();
 
 //Routes
 app.use('*', notFound);
+app.use(cors());
 
 app.get('/', (request, response) => {
   console.log("alive?");
-  response.sendFile('./public/index.html')
+  // response.sendFile('./public/index.html');
+  response.send('hello world');
 })
 
 
@@ -24,5 +26,5 @@ function notFound() {
 
 //server is listening
 app.listen(PORT, () => {
-  console.log(`Server is ALIVE and listening on port ${PORT}`)
+  console.log(`Server is ALIVE and listening on port ${PORT}`);
 })
