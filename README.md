@@ -1,4 +1,13 @@
-# lab-06
+# lab-06 City-explorer-api
+
+**Author**: Kevin McNeil
+**Version**: 1.0.0
+
+## Overview: to create an application that will help users find useful information about cities they may be visiting such as current weather fo the week and possible restaurants to visit.
+
+## Getting Started: the user should only ahve to enter the city name of where they would like to visit.
+
+## Architecture: created a backend server to run the front end created by codefellows. using constructor functions and loops we take the information provided through .json files (or APIs) and send it to the front end in a useable form to be rendered to the DOM.
 
 ## User Acceptance Tests
 
@@ -42,3 +51,13 @@ Finish time: 4:40pm
 
 Actual time needed to complete: 10 min
 
+
+## Change Log
+nothing to report at this time, this is the first iteration.
+<!-- Use this area to document the iterative changes made to your application as each feature is successfully implemented. Use time stamps. Here's an examples:
+
+01-01-2001 4:59pm - Application now has a fully-functional express server, with a GET route for the location resource.
+
+## Credits and Collaborations
+<!-- Give credit (and a link) to other people or resources that helped you build this application. -->
+-->
