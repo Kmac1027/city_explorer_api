@@ -26,8 +26,6 @@ function Weather(description, time) {
   this.forecast = description;
   this.time = time;
   weatherArray.push(this);
-
-
 }
 //functions
 function locationHandler(request, response) {
