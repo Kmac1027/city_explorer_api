@@ -44,22 +44,22 @@ function Trail(object) {
   this.condition_time = object.conditionDate.slice(11, 19);
 }
 //Route Handler Functions
-function locationHandler(request, response) {
-  let city = request.query.city;
-  let key = process.env.GEOCODE_API_KEY;
-  const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json`;
-  superagent.get(url)
-    .then(data => {
-      let location = data.body[0];
-      const infoThroughConstruct = new Location(city, location);
-      response.send(infoThroughConstruct);
-    })
-    .catch((error) => {
-      console.log('Error', error);
-      response.status(500).send('sorry, something went wrong');
-    });
+// function locationHandler(request, response) {
+//   let city = request.query.city;
+//   let key = process.env.GEOCODE_API_KEY;
+//   const url = `https://us1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json`;
+//   superagent.get(url)
+//     .then(data => {
+//       let location = data.body[0];
+//       const infoThroughConstruct = new Location(city, location);
+//       response.send(infoThroughConstruct);
+//     })
+//     .catch((error) => {
+//       console.log('Error', error);
+//       response.status(500).send('sorry, something went wrong');
+//     });
 
-}
+// }
 function weatherHandler(request, response) {
   try {
     const lat = request.query.latitude;
