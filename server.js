@@ -7,10 +7,13 @@ const express = require('express');
 const app = express();
 app.use(cors());
 const superagent = require('superagent');
-
+let pg = require('pg');
+const dataBaseUrl = process.env.DATABASE_URL;
+const client = new pg.Client(process.env.DATABASE_URL);
+let locations = [];
 //Routes
 
-app.get('/location', locationHandler);
+app.get('/location', handleGetLocation);
 app.get('/weather', weatherHandler);
 app.get('/trails', trailHandler);
 app.use('*', notFound);
@@ -40,7 +43,7 @@ function Trail(object) {
   this.condition_date = object.conditionDate.slice(0, 10);
   this.condition_time = object.conditionDate.slice(11, 19);
 }
-//functions
+//Route Handler Functions
 function locationHandler(request, response) {
   let city = request.query.city;
   let key = process.env.GEOCODE_API_KEY;
@@ -82,10 +85,10 @@ function trailHandler(request, response) {
     let key = process.env.TRAIL_API_KEY;
     const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=${key}`;
     superagent.get(url)
-    .then(results => {
-      let trailData = results.body.trails;
-      response.send(trailData.map(value => new Trail(value)));
-    })
+      .then(results => {
+        let trailData = results.body.trails;
+        response.send(trailData.map(value => new Trail(value)));
+      })
   }
   catch (error) {
     console.log('ERROR', error);
@@ -96,7 +99,59 @@ function trailHandler(request, response) {
 function notFound(request, response) {
   response.status(404).send('Sorry, Not Found');
 }
+
+function handleGetLocation(req, res) {
+  if (locations[req.query.city]) {
+    console.log('getting city from memory', req.query.city)
+    res.status(200).json(locations[req.query.city]);
+  }
+  else {
+
+    console.log('getting city from API', req.query.city)
+
+    let url = `https://us1.locationiq.com/v1/search.php`;
+
+    let queryObject = {
+      key: process.env.GEOCODE_API_KEY,
+      city: req.query.city,
+      format: 'json',
+      limit: 1
+    };
+
+    superagent.get(url).query(queryObject)
+      // if
+      .then(dishes => {
+        let data = dishes.body[0];
+        let location = {
+          latitude: data.lat,
+          longitude: data.lon,
+          name: data.display_name
+        };
+
+        // Store in the DB, please, not memory
+        // INSERT
+        locations[req.query.city] = location;
+
+        res.status(200).json(location);
+      })
+      // else
+      .catch(err => {
+        throw new Error(err.message);
+      })
+
+  }
+}
 //server is listening
-app.listen(PORT, () => {
-  console.log(`Server is ALIVE and listening on port ${PORT}`);
-});
+client.connect()
+  .then(startServer)
+  .catch(e => console.log(e))
+
+function startServer() {
+  app.listen(PORT, () => {
+    console.log(`Server is ALIVE and listening on port ${PORT}`);
+  });
+}
+
+// console.log(Json.stringify(route, null, 2))
+
+// .set('Authorization', 'Bearer API_KEY')
