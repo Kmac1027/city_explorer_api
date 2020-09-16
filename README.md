@@ -1,7 +1,7 @@
 # lab-06 City-explorer-api
 
 **Author**: Kevin McNeil
-**Version**: 1.5.0
+**Version**: 1.5.5
 
 ## Overview: to create an application that will help users find useful information about cities they may be visiting such as current weather fo the week and possible restaurants to visit.
 
@@ -9,7 +9,7 @@
 
 ## Architecture: created a backend server to run the front end created by codefellows. using constructor functions and loops we take the information provided through .json files (or APIs) and send it to the front end in a useable form to be rendered to the DOM.
 
-## User Acceptance Tests Sept 15th 2020
+## User Acceptance Tests Sept 14th 2020
 
 ### Number and name of feature:  Repository Set Up
 
@@ -61,7 +61,7 @@ Finish time: 4:40pm
 
 Actual time needed to complete: 10 min
 
-## User Acceptance Tests Sept 16th 2020
+## User Acceptance Tests Sept 15th 2020
 
 ### Number and name of feature: 1. Data formatting: As a user, I want the application to provide properly formatted data so that I can view similar data for any location I choose.
 
@@ -101,10 +101,21 @@ Finish time: 5pm
 
 Actual time needed to complete: 30min
 
+## User Acceptance Tests Sept 16th 2020
+
+### Number and name of feature: 1 - 3. Database: As a user, I want the application to perform quickly, so that I can search for locations frequently and reliably.
+Estimate of time needed to complete: 1hr
+
+Start time: 2:00
+
+Finish time: 4:30
+
+Actual time needed to complete: 2.5hrs
+
 ## Change Log
 sept 14th 2020 - nothing to report at this time, this is the first iteration.
 sept 15th 2020 - added trail routes and adjusted the weather function to use .map
+sept 16th 2020 - added SQL database - site now checks database before going to API
 
 ## Credits and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
--->
