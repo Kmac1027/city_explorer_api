@@ -7,6 +7,7 @@ CREATE TABLE locations(
   latitude decimal,
   longitude decimal
 );
+
 DROP TABLE IF EXISTS weather;
 
 CREATE TABLE weather(

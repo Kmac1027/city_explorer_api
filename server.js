@@ -11,6 +11,9 @@ let pg = require("pg");
 const { response } = require("express");
 const dataBaseUrl = process.env.DATABASE_URL;
 const client = new pg.Client(dataBaseUrl);
+client.on('error', (err) => {
+  console.err(err);
+});
 //Routes
 
 app.get("/location", locationHandler);
@@ -87,24 +90,15 @@ function weatherHandler(request, response) {
   const lon = request.query.longitude;
   const formattedQuery = request.query.formatted_query;
   let key = process.env.WEATHER_API_KEY;
-  let todaysDate = Date.now();
   const url = `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${key}`;
   const sql = `SELECT * FROM weather WHERE formatted_query=$1;`;
   const safeValues = [formattedQuery];
-
+  
   client.query(sql, safeValues).then((resultsFromSql) => {
-    if (resultsFromSql.rowCount > 0 && Date.parse(todaysDate) - Date.parse(resultsFromSql.rows[0].time_of_day) < 864) {
-      const chosenweather = resultsFromSql.rows[0];
-      console.log("*weather* pulling from database");
-      response.status(200).send(chosenweather);
-    } else {
-      //trial code for deleting the old weather data and replacing it with the new data
-      if (resultsFromSql.rowCount > 0 && Date.parse(todaysDate) - Date.parse(resultsFromSql.rows[0].time_of_day) >= 864) {
-        console.log('its old');
-        client.query(deleteSQL, [formattedQuery.toLowerCase()])
-          .then(results => console.log('old data deleted' + results))
-          ///////////////////////////////////////////////////////////////
-      }
+    const chosenweather = resultsFromSql[0];
+    console.log(resultsFromSql)
+    // let freshData = Date.parse(new Date(Date.now()).toLocaleDateString()) - Date.parse(resultsFromSql[0].time_of_day) < 864;
+    if (resultsFromSql.rows.length === 0){
       superagent
         .get(url)
         .then((results) => {
@@ -114,6 +108,35 @@ function weatherHandler(request, response) {
           let timeOfDay = Date.now();
           const sql = `INSERT INTO weather (formatted_query, weather_data_slice, time_of_day) VALUES ($1, $2, $3)`;
           const safeValues = [formattedQuery, JSON.stringify(weatherDataSlice), timeOfDay];
+          console.log(timeOfDay);
+          client.query(sql, safeValues).then(() => {
+            response.send(
+              weatherDataSlice.map(
+                (value) =>
+                  new Weather(value.weather.description, value.datetime)
+              )
+            );
+          });
+        })
+        .catch((error) => {
+          console.log("ERROR", error);
+          response.status(500).send("So sorry, something went wrong.");
+        });
+    }
+    else if (resultsFromSql.rowCount > 0 &&  Date.parse(new Date(Date.now())) - Date.parse(resultsFromSql.rows[0].time_of_day) < 864000) {
+      console.log('*weather* pulling from database');
+      response.status(200).send(chosenweather);
+    } else {
+      superagent
+        .get(url)
+        .then((results) => {
+          let weatherData = results.body.data;
+          console.log("*weather* old data, must make API call");
+          let weatherDataSlice = weatherData.slice(0, 8);
+          let timeOfDay = Date.now();
+          const sql = `INSERT INTO weather (formatted_query, weather_data_slice, time_of_day) VALUES ($1, $2, $3)`;
+          const safeValues = [formattedQuery, JSON.stringify(weatherDataSlice), timeOfDay];
+          console.log(timeOfDay);
           client.query(sql, safeValues).then(() => {
             response.send(
               weatherDataSlice.map(
@@ -163,6 +186,6 @@ function startServer() {
   });
 }
 
-// console.log(Json.stringify(route, null, 2))
+    // console.log(Json.stringify(route, null, 2))
 
-// .set('Authorization', 'Bearer API_KEY')
+    // .set('Authorization', 'Bearer API_KEY')
