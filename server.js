@@ -98,6 +98,13 @@ function weatherHandler(request, response) {
       console.log("*weather* pulling from database");
       response.status(200).send(chosenweather);
     } else {
+      //trial code for deleting the old weather data and replacing it with the new data
+      if (resultsFromSql.rowCount > 0 && Date.parse(todaysDate) - Date.parse(resultsFromSql.rows[0].time_of_day) >= 864) {
+        console.log('its old');
+        client.query(deleteSQL, [formattedQuery.toLowerCase()])
+          .then(results => console.log('old data deleted' + results))
+          ///////////////////////////////////////////////////////////////
+      }
       superagent
         .get(url)
         .then((results) => {
